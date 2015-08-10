@@ -260,6 +260,9 @@ public class TNImageSliderViewController: UIViewController, UICollectionViewData
         
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier("TNImageCell", forIndexPath: indexPath) as! TNImageSliderCollectionViewCell
         cell.imageView.image = images[indexPath.row]
+        cell.imageView.contentMode = UIViewContentMode.ScaleAspectFill
+        cell.topView.hidden = indexPath.item % 2 == 0
+        cell.bottomView.hidden = indexPath.item % 2 == 1
         
         return cell
         

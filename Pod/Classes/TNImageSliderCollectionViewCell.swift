@@ -12,6 +12,8 @@ class TNImageSliderCollectionViewCell: UICollectionViewCell {
     // MARK: - IBOutlets
     
     @IBOutlet weak var imageView: UIImageView!
+    @IBOutlet weak var topView: UIView!
+    @IBOutlet weak var bottomView: UIView!
     
     // MARK: - Properties
     
