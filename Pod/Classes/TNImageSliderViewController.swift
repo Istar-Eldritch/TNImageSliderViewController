@@ -108,7 +108,7 @@ public class TNImageSliderViewController: UIViewController, UICollectionViewData
 
     required public init(coder aDecoder: NSCoder) {
         
-        super.init(coder: aDecoder)
+        super.init(coder: aDecoder)!
         
     }
     
@@ -175,7 +175,7 @@ public class TNImageSliderViewController: UIViewController, UICollectionViewData
         layout.minimumInteritemSpacing = 0
         
         collectionView = UICollectionView(frame: CGRectZero, collectionViewLayout:layout)
-        collectionView.setTranslatesAutoresizingMaskIntoConstraints(false)
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.pagingEnabled = true
         
         let bundle = NSBundle(forClass: TNImageSliderViewController.classForCoder())
@@ -187,8 +187,9 @@ public class TNImageSliderViewController: UIViewController, UICollectionViewData
         collectionView.dataSource = self
         view.addSubview(collectionView)
     
-        let horizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|[collectionView]|", options: nil, metrics: nil, views: ["collectionView":collectionView])
-        let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|[collectionView]|", options: nil, metrics: nil, views: ["collectionView":collectionView])
+        let void: NSLayoutFormatOptions = NSLayoutFormatOptions.init(rawValue: 0)
+        let horizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|[collectionView]|", options: void, metrics: nil, views: ["collectionView":collectionView])
+        let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|[collectionView]|", options: void, metrics: nil, views: ["collectionView":collectionView])
         
         view.addConstraints(horizontalConstraints)
         view.addConstraints(verticalConstraints)
@@ -198,7 +199,7 @@ public class TNImageSliderViewController: UIViewController, UICollectionViewData
     private func setupPageControl() {
         
         pageControl = UIPageControl()
-        pageControl.setTranslatesAutoresizingMaskIntoConstraints(false)
+        pageControl.translatesAutoresizingMaskIntoConstraints = false
         
         pageControl.currentPage = 0
         pageControl.currentPageIndicatorTintColor = options.pageControlCurrentIndicatorTintColor
