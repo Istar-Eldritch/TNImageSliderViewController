@@ -4,9 +4,7 @@
 //  Created by Frederik Jacques on 20/06/15.
 //  Copyright (c) 2015 Frederik Jacques. All rights reserved.
 //
-
 import UIKit
-
 public struct TNImageSliderViewOptions {
     
     public var scrollDirection:UICollectionViewScrollDirection
@@ -16,10 +14,10 @@ public struct TNImageSliderViewOptions {
     
     public init(){
         
-        self.scrollDirection = UICollectionViewScrollDirection.Horizontal
-        self.backgroundColor = UIColor.blackColor()
+        self.scrollDirection = UICollectionViewScrollDirection.horizontal
+        self.backgroundColor = UIColor.black
         self.pageControlHidden = false
-        self.pageControlCurrentIndicatorTintColor = UIColor.whiteColor()
+        self.pageControlCurrentIndicatorTintColor = UIColor.white
         
     }
     
@@ -32,15 +30,13 @@ public struct TNImageSliderViewOptions {
         
     }
 }
-
-public class TNImageSliderViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
-
+open class TNImageSliderViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
     // MARK: - IBOutlets
     
     // MARK: - Properties
     var collectionView:UICollectionView!
     var collectionViewLayout:UICollectionViewFlowLayout {
-    
+        
         get {
             
             return collectionView.collectionViewLayout as! UICollectionViewFlowLayout
@@ -51,17 +47,17 @@ public class TNImageSliderViewController: UIViewController, UICollectionViewData
     
     var pageControl:UIPageControl!
     
-    public var options:TNImageSliderViewOptions! {
-    
+    open var options:TNImageSliderViewOptions! {
+        
         didSet {
             
             if let collectionView = collectionView, let pageControl = pageControl {
-            
+                
                 collectionViewLayout.scrollDirection = options.scrollDirection
                 
                 collectionView.collectionViewLayout = collectionViewLayout
                 collectionView.backgroundColor = options.backgroundColor
-                pageControl.hidden = options.pageControlHidden
+                pageControl.isHidden = options.pageControlHidden
                 pageControl.currentPageIndicatorTintColor = options.pageControlCurrentIndicatorTintColor
                 
             }
@@ -70,7 +66,7 @@ public class TNImageSliderViewController: UIViewController, UICollectionViewData
         
     }
     
-    public var images:[UIImage]! {
+    open var images:[UIImage]! {
         
         didSet {
             
@@ -87,11 +83,11 @@ public class TNImageSliderViewController: UIViewController, UICollectionViewData
             
             switch( collectionViewLayout.scrollDirection ) {
                 
-                case .Horizontal:
-                    return Int((collectionView.contentOffset.x / collectionView.contentSize.width) * CGFloat(images.count))
+            case .horizontal:
+                return Int((collectionView.contentOffset.x / collectionView.contentSize.width) * CGFloat(images.count))
                 
-                case .Vertical:
-                    return Int((collectionView.contentOffset.y / collectionView.contentSize.height) * CGFloat(images.count))
+            case .vertical:
+                return Int((collectionView.contentOffset.y / collectionView.contentSize.height) * CGFloat(images.count))
                 
             }
             
@@ -100,12 +96,11 @@ public class TNImageSliderViewController: UIViewController, UICollectionViewData
     }
     
     // MARK: - Initializers methods
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         
     }
-
     required public init(coder aDecoder: NSCoder) {
         
         super.init(coder: aDecoder)!
@@ -113,7 +108,7 @@ public class TNImageSliderViewController: UIViewController, UICollectionViewData
     }
     
     // MARK: - Lifecycle methods
-    public override func viewDidLoad() {
+    open override func viewDidLoad() {
         
         super.viewDidLoad()
         
@@ -124,32 +119,32 @@ public class TNImageSliderViewController: UIViewController, UICollectionViewData
         
     }
     
-    public override func didReceiveMemoryWarning() {
+    open override func didReceiveMemoryWarning() {
         
         super.didReceiveMemoryWarning()
         
     }
     
-    public override func viewWillTransitionToSize(size: CGSize, withTransitionCoordinator coordinator: UIViewControllerTransitionCoordinator) {
+    open override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         
-        super.viewWillTransitionToSize(size, withTransitionCoordinator: coordinator)
+        super.viewWillTransition(to: size, with: coordinator)
         
         // Calculate current page to update the content offset to the correct position when the orientation changes
         // I take a copy of the currentPage variable, as it will be incorrectly calculated once we are in the animateAlongsideTransition block
         // Because the contentSize will already be changed to reflect the new orientation
         let theCurrentPage = Int(currentPage)
         
-        coordinator.animateAlongsideTransition({ (context) -> Void in
+        coordinator.animate(alongsideTransition: { (context) -> Void in
             
             let contentOffSet:CGPoint
             
             switch( self.collectionViewLayout.scrollDirection ) {
                 
-            case .Horizontal:
+            case .horizontal:
                 
                 contentOffSet = CGPoint(x: Int(self.collectionView.bounds.size.width) * theCurrentPage, y: 0)
                 
-            case .Vertical:
+            case .vertical:
                 
                 contentOffSet = CGPoint(x: 0, y: Int(self.collectionView.bounds.size.height) * self.currentPage)
                 
@@ -157,8 +152,8 @@ public class TNImageSliderViewController: UIViewController, UICollectionViewData
             
             self.collectionView.contentOffset = contentOffSet
             
-            }, completion: { (context) -> Void in
-                
+        }, completion: { (context) -> Void in
+            
         })
         
         self.collectionView.collectionViewLayout.invalidateLayout()
@@ -166,62 +161,61 @@ public class TNImageSliderViewController: UIViewController, UICollectionViewData
     }
     
     // MARK: - Private methods
-    private func setupCollectionView(){
-    
+    fileprivate func setupCollectionView(){
+        
         let layout = UICollectionViewFlowLayout()
-
         layout.scrollDirection = options.scrollDirection
         layout.minimumLineSpacing = 0
         layout.minimumInteritemSpacing = 0
         
-        collectionView = UICollectionView(frame: CGRectZero, collectionViewLayout:layout)
+        collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout:layout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.pagingEnabled = true
+        collectionView.isPagingEnabled = true
         
-        let bundle = NSBundle(forClass: TNImageSliderViewController.classForCoder())
+        let bundle = Bundle(for: TNImageSliderViewController.classForCoder())
         let nib = UINib(nibName: "TNImageSliderCollectionViewCell", bundle: bundle)
         
-        collectionView.registerNib(nib, forCellWithReuseIdentifier: "TNImageCell")
+        collectionView.register(nib, forCellWithReuseIdentifier: "TNImageCell")
         collectionView.backgroundColor = options.backgroundColor
         collectionView.delegate = self
         collectionView.dataSource = self
         view.addSubview(collectionView)
-    
+        
         let void: NSLayoutFormatOptions = NSLayoutFormatOptions.init(rawValue: 0)
-        let horizontalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("H:|[collectionView]|", options: void, metrics: nil, views: ["collectionView":collectionView])
-        let verticalConstraints = NSLayoutConstraint.constraintsWithVisualFormat("V:|[collectionView]|", options: void, metrics: nil, views: ["collectionView":collectionView])
+        let horizontalConstraints = NSLayoutConstraint.constraints(withVisualFormat: "H:|[collectionView]|", options: void, metrics: nil, views: ["collectionView":collectionView])
+        let verticalConstraints = NSLayoutConstraint.constraints(withVisualFormat: "V:|[collectionView]|", options: void, metrics: nil, views: ["collectionView":collectionView])
         
         view.addConstraints(horizontalConstraints)
         view.addConstraints(verticalConstraints)
         
     }
     
-    private func setupPageControl() {
+    fileprivate func setupPageControl() {
         
         pageControl = UIPageControl()
         pageControl.translatesAutoresizingMaskIntoConstraints = false
         
         pageControl.currentPage = 0
         pageControl.currentPageIndicatorTintColor = options.pageControlCurrentIndicatorTintColor
-    
-        pageControl.hidden = options.pageControlHidden
+        
+        pageControl.isHidden = options.pageControlHidden
         view.addSubview(pageControl)
         
         let centerXConstraint = NSLayoutConstraint(item: pageControl,
-            attribute: NSLayoutAttribute.CenterX,
-            relatedBy: NSLayoutRelation.Equal,
-            toItem: view,
-            attribute: NSLayoutAttribute.CenterX,
-            multiplier: 1.0,
-            constant: 0)
+                                                   attribute: NSLayoutAttribute.centerX,
+                                                   relatedBy: NSLayoutRelation.equal,
+                                                   toItem: view,
+                                                   attribute: NSLayoutAttribute.centerX,
+                                                   multiplier: 1.0,
+                                                   constant: 0)
         
         let bottomConstraint = NSLayoutConstraint(item: pageControl,
-            attribute: NSLayoutAttribute.Bottom,
-            relatedBy: NSLayoutRelation.Equal,
-            toItem: view,
-            attribute: NSLayoutAttribute.Bottom,
-            multiplier: 1.0,
-            constant: -5)
+                                                  attribute: NSLayoutAttribute.bottom,
+                                                  relatedBy: NSLayoutRelation.equal,
+                                                  toItem: view,
+                                                  attribute: NSLayoutAttribute.bottom,
+                                                  multiplier: 1.0,
+                                                  constant: -5)
         
         view.addConstraints([centerXConstraint, bottomConstraint])
         
@@ -239,16 +233,16 @@ public class TNImageSliderViewController: UIViewController, UICollectionViewData
     
     // MARK: - Datasource methods
     // MARK: UICollectionViewDataSource methods
-    public func numberOfSectionsInCollectionView(collectionView: UICollectionView) -> Int {
-    
+    open func numberOfSections(in collectionView: UICollectionView) -> Int {
+        
         return 1
         
     }
     
-    public func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-    
-        if let images = images {
+    open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
+        if let images = images {
+            
             return images.count
             
         }
@@ -257,19 +251,19 @@ public class TNImageSliderViewController: UIViewController, UICollectionViewData
         
     }
     
-    public func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+    open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("TNImageCell", forIndexPath: indexPath) as! TNImageSliderCollectionViewCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "TNImageCell", for: indexPath) as! TNImageSliderCollectionViewCell
         cell.imageView.image = images[indexPath.row]
-        cell.imageView.contentMode = UIViewContentMode.ScaleAspectFill
-        cell.topView.hidden = indexPath.item % 2 == 0
-        cell.bottomView.hidden = indexPath.item % 2 == 1
+        cell.imageView.contentMode = UIViewContentMode.scaleAspectFill
+        cell.topView.isHidden = indexPath.item % 2 == 0
+        cell.bottomView.isHidden = indexPath.item % 2 == 1
         
         return cell
         
     }
     
-    public func collectionView( collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+    open func collectionView( _ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: IndexPath) -> CGSize {
         
         return collectionView.bounds.size
         
@@ -277,7 +271,7 @@ public class TNImageSliderViewController: UIViewController, UICollectionViewData
     
     // MARK: - Delegate methods
     // MARK: UICollectionViewDelegate methods
-    public func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+    open func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         
         // If the scroll animation ended, update the page control to reflect the current page we are on
         pageControl.currentPage = currentPage
